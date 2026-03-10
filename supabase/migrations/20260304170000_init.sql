@@ -60,6 +60,10 @@ CREATE POLICY "public insert comment"
 ON public.portfolio_comments FOR INSERT
 WITH CHECK (is_pinned = false);
 
+CREATE POLICY "users read own profile"
+ON public.profiles FOR SELECT
+USING (auth.uid() = id);
+
 CREATE POLICY "admin manage projects"
 ON public.projects FOR ALL
 USING (
@@ -78,8 +82,17 @@ USING (
   )
 );
 
-CREATE POLICY "admin manage comments"
-ON public.portfolio_comments FOR UPDATE, DELETE
+CREATE POLICY "admin update comments"
+ON public.portfolio_comments FOR UPDATE
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
+
+CREATE POLICY "admin delete comments"
+ON public.portfolio_comments FOR DELETE
 USING (
   EXISTS (
     SELECT 1 FROM public.profiles

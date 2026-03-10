@@ -75,8 +75,15 @@ const handleLogin = async () => {
   const { data, error } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value })
   if (error) { alert(error.message); loading.value = false; return }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles').select('role').eq('id', data.user.id).single()
+
+  if (profileError) {
+    alert('Profil admin belum siap. Pastikan tabel profiles punya row untuk user ini dan policy profiles sudah dibuat.')
+    await supabase.auth.signOut()
+    loading.value = false
+    return
+  }
 
   if (profile?.role !== 'admin') {
     alert('Access denied')
