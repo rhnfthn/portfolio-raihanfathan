@@ -1,5 +1,5 @@
 <template>
-  <div class="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0" id="About" itemscope itemtype="https://schema.org/Person">
+  <div class="h-auto pb-[10%] text-white overflow-x-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-4 sm:mt-0" id="About" itemscope itemtype="https://schema.org/Person">
     <!-- Header -->
     <div class="text-center lg:mb-8 mb-2 px-[5%]">
       <div class="inline-block relative group">
@@ -12,7 +12,7 @@
       </p>
     </div>
 
-    <div class="w-full mx-auto pt-8 sm:pt-12 relative">
+    <div class="w-full mx-auto pt-6 sm:pt-8 relative">
       <div class="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div class="space-y-6 text-center lg:text-left">
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold" data-aos="fade-right" data-aos-duration="1000">

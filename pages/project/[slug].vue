@@ -4,10 +4,10 @@
       <title>{{ project?.Title ? `${project.Title} — Eki Zulfar Rachman` : 'Loading...' }}</title>
       <meta v-if="project" name="description" :content="project.Description ? project.Description.slice(0, 155) : `Project ${project.Title} oleh Eki Zulfar Rachman`" />
       <meta name="robots" content="index, follow" />
-      <link v-if="project" rel="canonical" :href="`https://ekizr.com/project/${toSlug(project.Title)}`" />
+      <link v-if="project" rel="canonical" :href="`https://rhndev.vercel.app/project/${toSlug(project.Title)}`" />
       <meta v-if="project" property="og:title" :content="`${project.Title} — Eki Zulfar Rachman`" />
       <meta v-if="project" property="og:description" :content="project.Description?.slice(0, 155)" />
-      <meta v-if="project" property="og:url" :content="`https://ekizr.com/project/${toSlug(project.Title)}`" />
+      <meta v-if="project" property="og:url" :content="`https://rhndev.vercel.app/project/${toSlug(project.Title)}`" />
       <meta property="og:type" content="website" />
       <meta v-if="project?.Img" property="og:image" :content="project.Img" />
     </Head>
@@ -157,6 +157,17 @@ const route = useRoute()
 const { supabase } = useSupabase()
 const project = ref(null)
 
+const normalizeProject = (item = {}) => ({
+  ...item,
+  Title: item.Title ?? item.title ?? '',
+  Description: item.Description ?? item.description ?? '',
+  Img: item.Img ?? item.img ?? '',
+  Link: item.Link ?? item.link ?? '',
+  Github: item.Github ?? item.github ?? '',
+  TechStack: item.TechStack ?? item.tech_stack ?? [],
+  Features: item.Features ?? item.features ?? [],
+})
+
 const TECH_ICONS = {
   React: Globe, Tailwind: Layout, Express: Cpu, Python: Code, Javascript: Code, HTML: Code, CSS: Code, default: Package,
 }
@@ -182,22 +193,20 @@ onMounted(async () => {
   const { data: allProjects } = await supabase.from('projects').select('*')
   let selectedProject = null
   if (allProjects) {
-    selectedProject = allProjects.find((p) => toSlug(p.Title) === route.params.slug)
+    selectedProject = allProjects.map(normalizeProject).find((p) => toSlug(p.Title) === route.params.slug)
   }
 
   // Fallback to localStorage
   if (!selectedProject) {
     const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]')
-    selectedProject = storedProjects.find((p) => toSlug(p.Title) === route.params.slug)
+    selectedProject = storedProjects.map(normalizeProject).find((p) => toSlug(p.Title) === route.params.slug)
   }
 
   if (selectedProject) {
-    project.value = {
+    project.value = normalizeProject({
       ...selectedProject,
-      Features: selectedProject.Features || [],
-      TechStack: selectedProject.TechStack || [],
-      Github: selectedProject.Github || 'https://github.com/EkiZR',
-    }
+      Github: selectedProject.Github || selectedProject.github || 'https://github.com/rhnfthn',
+    })
   }
 })
 

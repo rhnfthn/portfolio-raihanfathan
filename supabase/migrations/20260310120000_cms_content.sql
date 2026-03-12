@@ -94,9 +94,9 @@ INSERT INTO public.site_content (id, data) VALUES
   "cv_url": "https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo",
   "experience_start": "2021-11-06",
   "social_links": [
-    {"type": "github", "url": "https://github.com/EkiZR"},
-    {"type": "linkedin", "url": "https://www.linkedin.com/in/ekizr/"},
-    {"type": "instagram", "url": "https://www.instagram.com/ekizr_/?hl=id"}
+    {"type": "github", "url": "https://github.com/rhnfthn"},
+    {"type": "linkedin", "url": "https://www.linkedin.com/in/raihanfathan/"},
+    {"type": "instagram", "url": "https://www.instagram.com/rhn_fthn/?hl=id"}
   ]
 }'::jsonb)
 ON CONFLICT DO NOTHING;

@@ -132,6 +132,22 @@ const certificates = ref([])
 const showAllProjects = ref(false)
 const showAllCertificates = ref(false)
 
+const normalizeProject = (project = {}) => ({
+  ...project,
+  Title: project.Title ?? project.title ?? '',
+  Description: project.Description ?? project.description ?? '',
+  Img: project.Img ?? project.img ?? '',
+  Link: project.Link ?? project.link ?? '',
+  Github: project.Github ?? project.github ?? '',
+  TechStack: project.TechStack ?? project.tech_stack ?? [],
+  Features: project.Features ?? project.features ?? [],
+})
+
+const normalizeCertificate = (certificate = {}) => ({
+  ...certificate,
+  Img: certificate.Img ?? certificate.img ?? '',
+})
+
 const isMobile = ref(false)
 const initialItems = computed(() => isMobile.value ? 4 : 6)
 
@@ -150,11 +166,11 @@ const fetchData = async () => {
   ])
 
   if (!projectsRes.error) {
-    projects.value = projectsRes.data || []
+    projects.value = (projectsRes.data || []).map(normalizeProject)
     localStorage.setItem('projects', JSON.stringify(projects.value))
   }
   if (!certificatesRes.error) {
-    certificates.value = certificatesRes.data || []
+    certificates.value = (certificatesRes.data || []).map(normalizeCertificate)
     localStorage.setItem('certificates', JSON.stringify(certificates.value))
   }
   if (!techRes.error && techRes.data?.length) {

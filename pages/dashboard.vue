@@ -1,5 +1,5 @@
 <template>
-  <div class="flex text-white" style="height: 100dvh">
+  <div class="flex overflow-hidden text-white" style="height: 100dvh">
     <!-- Mobile overlay -->
     <div v-if="sidebarOpen" class="fixed inset-0 z-20 bg-black/60 lg:hidden" @click="sidebarOpen = false" />
 
@@ -39,6 +39,16 @@ definePageMeta({ layout: false, middleware: 'auth' })
 const { supabase } = useSupabase()
 const route = useRoute()
 const sidebarOpen = ref(false)
+
+onMounted(() => {
+  document.documentElement.style.overflow = 'hidden'
+  document.body.style.overflow = 'hidden'
+})
+
+onBeforeUnmount(() => {
+  document.documentElement.style.overflow = ''
+  document.body.style.overflow = ''
+})
 
 const handleLogout = async () => {
   await supabase.auth.signOut()

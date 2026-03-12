@@ -4,7 +4,7 @@ Hello everyone\! 👋
 
 Let me introduce myself, I'm **Eki Zulfar Rachman**. On this occasion, I'd like to share the portfolio website project that I've developed. built with React and Supabase, featuring a public-facing site and an admin dashboard.
 
-**Live Demo:** [https://ekizr.com](https://ekizr.com)
+**Live Demo:** [https://rhndev.vercel.app](https://rhndev.vercel.app)
 
 ---
 
@@ -42,7 +42,7 @@ This project is built using modern web technologies:
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/EkiZR/Portofolio_V5.git
+git clone https://github.com/rhnfthn/Portofolio_V5.git
 cd Portofolio_V5
 npm install
 ```
@@ -59,6 +59,28 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
 You can start from the provided `.env.example` and rename it to `.env`.
+
+### Running The App Correctly
+
+For this Nuxt app, do not run generated files inside `.nuxt/dist/server/` directly.
+Files like `.nuxt/dist/server/server.mjs` are internal build artifacts and can throw errors such as `#internal/nuxt/paths is not defined` when executed with Node directly.
+
+Use these commands instead:
+
+```bash
+npm run dev
+```
+
+```bash
+npm run build
+npm run start
+```
+
+Or for local preview after build:
+
+```bash
+npm run preview
+```
 
 ---
 
@@ -261,7 +283,7 @@ This script is also available in `supabase/admin.sql`.
 
 ```sql
 INSERT INTO public.profiles (id, username, role)
-VALUES ('USER_UUID', 'eki', 'admin');
+VALUES ('USER_UUID', 'raihan', 'admin');
 ```
 
 ### 7. Run Locally
@@ -312,8 +334,8 @@ Upload the contents of the `dist/` folder to your hosting provider.
 
 ## Credits & Contact
 
-**Eki Zulfar Rachman**  
-Website: [eki.my.id](https://ekizr.com) · GitHub: [EkiZR](https://github.com/EkiZR)
+**Raihan Fathan**  
+Website: [eki.my.id](https://rhndev.vercel.app) · GitHub: [rhnfthn](https://github.com/rhnfthn)
 
 Thanks to [LottieFiles](https://lottiefiles.com/free-animation/coding-NWhbxMOVgP) and Claude.
 

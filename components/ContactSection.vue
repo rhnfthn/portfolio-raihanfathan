@@ -11,9 +11,9 @@
     </div>
 
     <div class="h-auto py-10 flex items-center justify-center 2xl:pr-[3.1%] lg:pr-[3.8%] md:px-0">
-      <div class="container px-[1%] grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[45%_55%] 2xl:grid-cols-[35%_65%] gap-12">
+      <div class="container px-[1%] grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)] 2xl:grid-cols-[460px_minmax(0,1fr)] gap-10">
         <!-- Contact Form -->
-        <div class="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-5 py-10 sm:p-10 transform transition-all duration-500 hover:shadow-[#6366f1]/10">
+        <div class="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-5 py-8 sm:p-8 transform transition-all duration-500 hover:shadow-[#6366f1]/10">
           <div class="flex justify-between items-start mb-8">
             <div>
               <h2 class="text-4xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">Hubungi</h2>

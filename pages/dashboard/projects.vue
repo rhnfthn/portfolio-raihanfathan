@@ -59,10 +59,21 @@ const showCreate = ref(false)
 const editProject = ref(null)
 const uploading = ref(false)
 
+const normalizeProject = (project = {}) => ({
+  ...project,
+  Title: project.Title ?? project.title ?? '',
+  Description: project.Description ?? project.description ?? '',
+  Img: project.Img ?? project.img ?? '',
+  Link: project.Link ?? project.link ?? '',
+  Github: project.Github ?? project.github ?? '',
+  TechStack: project.TechStack ?? project.tech_stack ?? [],
+  Features: project.Features ?? project.features ?? [],
+})
+
 const fetchProjects = async () => {
   loading.value = true
   const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
-  projects.value = data || []
+  projects.value = (data || []).map(normalizeProject)
   loading.value = false
 }
 
@@ -79,12 +90,20 @@ const handleCreate = async ({ form, file }) => {
   uploading.value = true
   let imgUrl = ''
   if (file) imgUrl = await uploadImage(file)
-  await supabase.from('projects').insert({
-    Title: form.Title, Description: form.Description, Img: imgUrl,
-    TechStack: form.TechStack.split(',').map(s => s.trim()).filter(Boolean),
-    Features: form.Features.split(',').map(s => s.trim()).filter(Boolean),
-    Link: form.Link, Github: form.Github,
+  const { error } = await supabase.from('projects').insert({
+    title: form.Title,
+    description: form.Description,
+    img: imgUrl,
+    tech_stack: form.TechStack.split(',').map(s => s.trim()).filter(Boolean),
+    features: form.Features.split(',').map(s => s.trim()).filter(Boolean),
+    link: form.Link,
+    github: form.Github,
   })
+  if (error) {
+    alert(error.message)
+    uploading.value = false
+    return
+  }
   showCreate.value = false
   uploading.value = false
   fetchProjects()
@@ -94,12 +113,20 @@ const handleEdit = async ({ form, file }) => {
   uploading.value = true
   let imgUrl = editProject.value.Img || ''
   if (file) imgUrl = await uploadImage(file)
-  await supabase.from('projects').update({
-    Title: form.Title, Description: form.Description, Img: imgUrl,
-    TechStack: form.TechStack.split(',').map(s => s.trim()).filter(Boolean),
-    Features: form.Features.split(',').map(s => s.trim()).filter(Boolean),
-    Link: form.Link, Github: form.Github,
+  const { error } = await supabase.from('projects').update({
+    title: form.Title,
+    description: form.Description,
+    img: imgUrl,
+    tech_stack: form.TechStack.split(',').map(s => s.trim()).filter(Boolean),
+    features: form.Features.split(',').map(s => s.trim()).filter(Boolean),
+    link: form.Link,
+    github: form.Github,
   }).eq('id', editProject.value.id)
+  if (error) {
+    alert(error.message)
+    uploading.value = false
+    return
+  }
   editProject.value = null
   uploading.value = false
   fetchProjects()

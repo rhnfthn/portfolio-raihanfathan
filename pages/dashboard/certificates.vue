@@ -97,10 +97,15 @@ const uploading = ref(false)
 const dragOver = ref(false)
 const loading = ref(true)
 
+const normalizeCertificate = (certificate = {}) => ({
+  ...certificate,
+  Img: certificate.Img ?? certificate.img ?? '',
+})
+
 const fetchCerts = async () => {
   loading.value = true
   const { data } = await supabase.from('certificates').select('*').order('created_at', { ascending: false })
-  certs.value = data || []
+  certs.value = (data || []).map(normalizeCertificate)
   loading.value = false
 }
 
@@ -116,9 +121,19 @@ const uploadImage = async () => {
   if (!file.value) return
   uploading.value = true
   const fileName = `cert-${Date.now()}-${file.value.name}`
-  await supabase.storage.from('certificate-images').upload(fileName, file.value)
+  const { error: uploadError } = await supabase.storage.from('certificate-images').upload(fileName, file.value)
+  if (uploadError) {
+    alert(uploadError.message)
+    uploading.value = false
+    return
+  }
   const { data } = supabase.storage.from('certificate-images').getPublicUrl(fileName)
-  await supabase.from('certificates').insert({ Img: data.publicUrl })
+  const { error: insertError } = await supabase.from('certificates').insert({ img: data.publicUrl })
+  if (insertError) {
+    alert(insertError.message)
+    uploading.value = false
+    return
+  }
   file.value = null
   preview.value = null
   uploading.value = false

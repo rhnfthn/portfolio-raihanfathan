@@ -2,12 +2,12 @@
   <div class="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]" id="Home">
     <div :class="['relative z-10 transition-all duration-1000', isLoaded ? 'opacity-100' : 'opacity-0']">
       <div class="container mx-auto min-h-screen">
-        <div class="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
+        <div class="flex flex-col lg:flex-row items-start justify-start lg:justify-between pt-16 sm:pt-16 pb-10 sm:pb-14 gap-8 sm:gap-12 lg:gap-20">
           <!-- Left Column -->
           <div class="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0" data-aos="fade-right" data-aos-delay="200">
             <div class="space-y-4 sm:space-y-6">
               <!-- Status Badge -->
-              <div class="inline-block animate-float lg:mx-0" data-aos="zoom-in" data-aos-delay="400">
+              <div class="mt-1 inline-block animate-float lg:mx-0" data-aos="zoom-in" data-aos-delay="400">
                 <div class="relative group">
                   <div class="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-full blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
                   <div class="relative px-3 sm:px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10">
@@ -41,7 +41,7 @@
               </div>
 
               <!-- Description -->
-              <p class="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light" data-aos="fade-up" data-aos-delay="1000">
+              <p class="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light text-justify" data-aos="fade-up" data-aos-delay="1000">
                 {{ home.description }}
               </p>
 
@@ -81,7 +81,7 @@
               </div>
 
               <!-- Social Links -->
-              <div class="hidden sm:flex gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
+              <div class="hidden sm:flex items-center gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
                 <a v-for="social in socialLinks" :key="social.label" :href="social.link" target="_blank" rel="noopener noreferrer" :aria-label="social.label">
                   <button class="group relative p-3" :aria-label="social.label">
                     <div class="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
@@ -90,31 +90,119 @@
                     </div>
                   </button>
                 </a>
+
+                <!-- Music (aligned with social icons) -->
+                <div class="relative flex items-center">
+                  <button
+                    type="button"
+                    @click="isMusicOpen = !isMusicOpen"
+                    :disabled="!home.song_url"
+                    aria-label="Music"
+                    class="group relative p-3"
+                  >
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300" />
+                    <div
+                      :class="[
+                        'relative rounded-xl bg-black/50 backdrop-blur-xl p-2 flex items-center justify-center border border-white/10 transition-all duration-300',
+                        home.song_url ? 'group-hover:border-white/20' : 'opacity-50 cursor-not-allowed'
+                      ]"
+                    >
+                      <Music4 :class="['w-5 h-5 transition-colors', isPlaying ? 'text-indigo-300' : 'text-gray-400', home.song_url ? 'group-hover:text-white' : '']" />
+                    </div>
+                  </button>
+
+                  <!-- Mini player (floats; does not affect icon alignment) -->
+                  <div v-if="isMusicOpen" class="absolute left-full top-1/2 z-30 ml-3 -translate-y-1/2 flex items-center gap-4">
+                    <!-- Play/Pause styled like other icons -->
+                    <button
+                      type="button"
+                      @click="toggleTrack"
+                      :disabled="!home.song_url"
+                      :class="['group relative p-3', home.song_url ? '' : 'opacity-50 cursor-not-allowed']"
+                      :aria-label="isPlaying ? 'Pause song' : 'Play song'"
+                    >
+                      <div class="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300" />
+                      <div class="relative rounded-xl bg-black/50 backdrop-blur-xl p-2 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-all duration-300">
+                        <Pause v-if="isPlaying" class="h-5 w-5 text-indigo-300 group-hover:text-white transition-colors" />
+                        <Play v-else class="ml-0.5 h-5 w-5 text-indigo-300 group-hover:text-white transition-colors" />
+                      </div>
+                    </button>
+
+                    <div class="w-72">
+                      <div class="flex h-9 items-end gap-1">
+                        <div
+                          v-for="(_, idx) in musicBars"
+                          :key="idx"
+                          :class="[
+                            'w-1 rounded-full bg-gradient-to-t from-[#6366f1] to-[#a855f7] opacity-80',
+                            isPlaying ? (idx % 3 === 0 ? 'animate-music-1' : idx % 3 === 1 ? 'animate-music-2' : 'animate-music-3') : ''
+                          ]"
+                          :style="isPlaying ? null : { height: musicBars[idx] + '%' }"
+                        />
+                      </div>
+
+                      <div class="mt-2">
+                        <input
+                          type="range"
+                          min="0"
+                          :max="duration || 0"
+                          step="0.1"
+                          :value="isSeeking ? seekValue : currentTime"
+                          :disabled="!home.song_url || !duration"
+                          @pointerdown="isSeeking = true"
+                          @pointerup="isSeeking = false"
+                          @pointercancel="isSeeking = false"
+                          @input="onSeekInput"
+                          class="w-full accent-indigo-400"
+                        />
+                        <div class="mt-1 flex items-center justify-between text-xs text-indigo-300/70">
+                          <span>{{ formatTime(currentTime) }}</span>
+                          <span>{{ formatTime(duration) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Right Column -->
-          <div class="w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2 mt-5 sm:mt-0"
+          <div class="w-full py-0 md:py-0 sm:py-0 lg:w-1/2 min-h-[360px] sm:min-h-[500px] lg:min-h-[680px] xl:min-h-[820px] relative flex flex-col items-center justify-start order-2 lg:order-2 mt-4 sm:mt-0"
             @mouseenter="isHovering = true" @mouseleave="isHovering = false" data-aos="fade-left" data-aos-delay="600">
             <div class="relative w-full opacity-90">
               <div :class="['absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out', isHovering ? 'opacity-50 scale-105' : 'opacity-20 scale-100']"></div>
-              <div :class="['relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500', isHovering ? 'scale-105' : 'scale-100']">
+              <div :class="['relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500 -mt-2', isHovering ? 'scale-105' : 'scale-100']">
                 <img :src="home.hero_image" alt="Developer Animation" :class="['w-full h-full object-contain transition-all duration-500', isHovering ? 'scale-[95%] sm:scale-[90%] md:scale-[90%] lg:scale-[90%] rotate-2' : 'scale-[90%] sm:scale-[80%] md:scale-[80%] lg:scale-[80%]']" />
               </div>
               <div :class="['absolute inset-0 pointer-events-none transition-all duration-700', isHovering ? 'opacity-50' : 'opacity-20']">
                 <div :class="['absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700', isHovering ? 'scale-110' : 'scale-100']"></div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Audio element (kept out of layout) -->
+  <audio
+    ref="audioEl"
+    :src="home.song_url || undefined"
+    preload="metadata"
+    @loadedmetadata="onLoadedMetadata"
+    @durationchange="onLoadedMetadata"
+    @timeupdate="onTimeUpdate"
+    @play="isPlaying = true"
+    @pause="isPlaying = false"
+    @ended="isPlaying = false"
+    class="hidden"
+  />
 </template>
 
 <script setup>
-import { Github, Linkedin, Mail as MailIcon, ExternalLink, Instagram, Sparkles } from 'lucide-vue-next'
+import { Github, Linkedin, Mail as MailIcon, ExternalLink, Instagram, Sparkles, Play, Pause, Music4 } from 'lucide-vue-next'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -132,20 +220,59 @@ const home = reactive({
   description: 'Menciptakan Website Yang Inovatif, Fungsional, dan User-Friendly untuk Solusi Digital.',
   tech_badges: ['React', 'Javascript', 'Node.js', 'Tailwind'],
   hero_image: '/Animation1.gif',
+  song_title: '',
+  song_url: '',
 })
 
 const socialLinks = [
-  { icon: Github, link: 'https://github.com/EkiZR', label: 'GitHub Profile' },
-  { icon: Linkedin, link: 'https://www.linkedin.com/in/ekizr/', label: 'LinkedIn Profile' },
-  { icon: Instagram, link: 'https://www.instagram.com/ekizr_/?hl=id', label: 'Instagram Profile' },
+  { icon: Github, link: 'https://github.com/rhnfthn', label: 'GitHub Profile' },
+  { icon: Linkedin, link: 'https://www.linkedin.com/in/raihanfathan/', label: 'LinkedIn Profile' },
+  { icon: Instagram, link: 'https://www.instagram.com/rhn_fthn/?hl=id', label: 'Instagram Profile' },
 ]
 
 const text = ref('')
 const isLoaded = ref(false)
 const isHovering = ref(false)
 const isTyping = ref(true)
+const isPlaying = ref(false)
+const isMusicOpen = ref(false)
 const wordIndex = ref(0)
 const charIndex = ref(0)
+const audioEl = ref(null)
+
+const duration = ref(0)
+const currentTime = ref(0)
+const seekValue = ref(0)
+const isSeeking = ref(false)
+
+const musicBars = Array.from({ length: 30 }, (_, idx) => 18 + ((idx * 37) % 72))
+
+const formatTime = (seconds) => {
+  const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0
+  const m = Math.floor(safeSeconds / 60)
+  const s = Math.floor(safeSeconds % 60)
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+const onLoadedMetadata = () => {
+  if (!audioEl.value) return
+  duration.value = Number.isFinite(audioEl.value.duration) ? audioEl.value.duration : 0
+  if (!isSeeking.value) {
+    currentTime.value = audioEl.value.currentTime || 0
+  }
+}
+
+const onTimeUpdate = () => {
+  if (!audioEl.value || isSeeking.value) return
+  currentTime.value = audioEl.value.currentTime || 0
+}
+
+const onSeekInput = (e) => {
+  const next = Number(e.target.value)
+  seekValue.value = next
+  currentTime.value = next
+  if (audioEl.value) audioEl.value.currentTime = next
+}
 
 const handleTyping = () => {
   const words = home.typing_words
@@ -176,6 +303,33 @@ const startTyping = () => {
   }, isTyping.value ? TYPING_SPEED : ERASING_SPEED)
 }
 
+const toggleTrack = async () => {
+  if (!audioEl.value || !home.song_url) return
+  if (isPlaying.value) {
+    audioEl.value.pause()
+    isPlaying.value = false
+    return
+  }
+  try {
+    await audioEl.value.play()
+    isPlaying.value = true
+  } catch {
+    isPlaying.value = false
+  }
+}
+
+watch(() => home.song_url, () => {
+  if (!audioEl.value) return
+  audioEl.value.pause()
+  audioEl.value.currentTime = 0
+  isPlaying.value = false
+
+  duration.value = 0
+  currentTime.value = 0
+  seekValue.value = 0
+  isMusicOpen.value = false
+})
+
 onMounted(async () => {
   AOS.init({ once: true, offset: 10 })
   isLoaded.value = true
@@ -191,7 +345,11 @@ onMounted(async () => {
     const labelMap = { github: 'GitHub Profile', linkedin: 'LinkedIn Profile', instagram: 'Instagram Profile' }
     socialLinks.length = 0
     aboutContent.data.social_links.forEach(link => {
-      socialLinks.push({ icon: iconMap[link.type] || Github, link: link.url, label: labelMap[link.type] || link.type })
+      let url = link.url
+      if (link.type === 'instagram' && typeof url === 'string') {
+        url = url.replace('instagram.com/rhnfthn', 'instagram.com/rhn_fthn')
+      }
+      socialLinks.push({ icon: iconMap[link.type] || Github, link: url, label: labelMap[link.type] || link.type })
     })
   }
 
@@ -200,5 +358,9 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (typingTimer) clearTimeout(typingTimer)
+  if (audioEl.value) {
+    audioEl.value.pause()
+    audioEl.value.currentTime = 0
+  }
 })
 </script>

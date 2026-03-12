@@ -40,7 +40,7 @@
 
         <!-- Website Link -->
         <div class="text-center" data-aos="fade-up" data-aos-delay="1200">
-          <a href="https://ekizr.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://rhndev.vercel.app" target="_blank" rel="noopener noreferrer"
             class="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full relative group hover:scale-105 transition-transform duration-300">
             <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300" />
             <div class="relative flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
@@ -71,7 +71,7 @@ onMounted(() => {
   AOS.init({ duration: 1000, once: false, mirror: false })
 
   // Typewriter effect
-  const fullText = 'ekizr.com'
+  const fullText = 'rhndev.vercel.app'
   let index = 0
   const typeInterval = setInterval(() => {
     if (index <= fullText.length) {
