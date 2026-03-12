@@ -72,8 +72,26 @@ const showPassword = ref(false)
 
 const handleLogin = async () => {
   loading.value = true
-  const { data, error } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value })
-  if (error) { alert(error.message); loading.value = false; return }
+  let data
+  try {
+    const res = await supabase.auth.signInWithPassword({ email: email.value, password: password.value })
+    data = res.data
+    if (res.error) {
+      alert(res.error.message)
+      loading.value = false
+      return
+    }
+  } catch (e) {
+    const message =
+      e instanceof Error
+        ? e.message
+        : 'Failed to fetch (network/config).'
+    alert(
+      `Login gagal: ${message}\n\nKalau deploy di Vercel, pastikan env NUXT_PUBLIC_SUPABASE_URL & NUXT_PUBLIC_SUPABASE_ANON_KEY sudah diset (Production/Preview) lalu redeploy.`
+    )
+    loading.value = false
+    return
+  }
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles').select('role').eq('id', data.user.id).single()

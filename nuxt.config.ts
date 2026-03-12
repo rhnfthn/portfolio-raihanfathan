@@ -61,9 +61,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl:
-        process.env.NUXT_PUBLIC_SUPABASE_URL || "http://localhost:54321",
+        process.env.NUXT_PUBLIC_SUPABASE_URL ||
+        (process.env.NODE_ENV === "production" ? "" : "http://localhost:54321"),
       supabaseAnonKey:
-        process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || "public-anon-key",
+        process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
+        (process.env.NODE_ENV === "production" ? "" : "public-anon-key"),
     },
   },
 
