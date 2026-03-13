@@ -77,7 +77,7 @@ import { MessageCircle, AlertCircle, Send, Loader2, ImagePlus, X, UserCircle2 } 
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
-const { supabase } = useSupabase()
+const { supabase, configured } = useSupabase()
 
 const comments = ref([])
 const pinnedComment = ref(null)
@@ -122,22 +122,43 @@ const uploadImage = async (file) => {
 const handleSubmit = async () => {
   if (!newComment.value.trim() || !userName.value.trim()) return
   error.value = ''
+
+  if (!configured) {
+    error.value = 'Komentar belum bisa digunakan karena Supabase belum terkonfigurasi.'
+    return
+  }
+
   isSubmitting.value = true
   try {
     const profileImageUrl = await uploadImage(imageFile.value)
-    const { error: insertError } = await supabase.from('portfolio_comments').insert([{
+
+    const payload = {
       content: newComment.value,
       user_name: userName.value,
       profile_image: profileImageUrl,
       is_pinned: false,
       created_at: new Date().toISOString(),
-    }])
+    }
+
+    const { data: inserted, error: insertError } = await supabase
+      .from('portfolio_comments')
+      .insert([payload])
+      .select('*')
+      .single()
+
     if (insertError) throw insertError
+
+    if (inserted) {
+      comments.value = [inserted, ...comments.value]
+    }
+
+    fetchComments()
     newComment.value = ''
     userName.value = ''
     clearImage()
   } catch (err) {
-    error.value = 'Failed to post comment. Please try again.'
+    const message = err?.message ? String(err.message) : ''
+    error.value = message ? `Failed to post comment: ${message}` : 'Failed to post comment. Please try again.'
     console.error('Error adding comment:', err)
   } finally {
     isSubmitting.value = false
@@ -161,27 +182,39 @@ const formatDate = (timestamp) => {
 provide('formatDate', formatDate)
 
 const fetchPinnedComment = async () => {
+  if (!configured) return
   const { data, error: err } = await supabase.from('portfolio_comments').select('*').eq('is_pinned', true).single()
   if (err && err.code !== 'PGRST116') console.error('Error fetching pinned comment:', err)
   if (data) pinnedComment.value = data
 }
 
 const fetchComments = async () => {
+  if (!configured) return
   const { data, error: err } = await supabase.from('portfolio_comments').select('*').eq('is_pinned', false).order('created_at', { ascending: false })
   if (err) { console.error('Error fetching comments:', err); return }
   comments.value = data || []
 }
+
+let subscription
 
 onMounted(() => {
   AOS.init({ once: false, duration: 1000 })
   fetchPinnedComment()
   fetchComments()
 
-  const subscription = supabase
-    .channel('portfolio_comments')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_comments', filter: 'is_pinned=eq.false' }, () => fetchComments())
-    .subscribe()
+  if (!configured) return
 
-  onBeforeUnmount(() => subscription.unsubscribe())
+  subscription = supabase
+    .channel('portfolio_comments')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'portfolio_comments', filter: 'is_pinned=eq.false' },
+      () => fetchComments(),
+    )
+    .subscribe()
+})
+
+onBeforeUnmount(() => {
+  subscription?.unsubscribe?.()
 })
 </script>

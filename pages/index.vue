@@ -8,6 +8,7 @@
       <AppNavbar />
       <HomeSection />
       <AboutSection />
+      <GallerySection />
       <PortfolioSection />
       <ContactSection />
       <AppFooter />
