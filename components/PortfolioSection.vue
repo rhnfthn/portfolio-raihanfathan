@@ -93,13 +93,43 @@
             </div>
           </div>
         </div>
+
+        <!-- Gallery -->
+        <div v-show="activeTab === 3" class="p-1 sm:p-3">
+          <div class="container mx-auto flex justify-center items-center overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                v-for="(image, index) in galleryImages"
+                :key="index"
+                :data-aos="index % 3 === 0 ? 'fade-up-right' : index % 3 === 1 ? 'fade-up' : 'fade-up-left'"
+                :data-aos-duration="index % 3 === 0 ? '1000' : index % 3 === 1 ? '1200' : '1000'"
+                class="group relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-b from-purple-500/[0.03] to-blue-500/[0.03] backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]"
+              >
+                <div class="aspect-[4/3] overflow-hidden">
+                  <img
+                    :src="image.src"
+                    :alt="image.alt"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-4">
+                  <h3 class="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+                    {{ image.title }}
+                  </h3>
+                  <p class="text-slate-400 text-sm mt-1">{{ image.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Code, Award, Boxes } from 'lucide-vue-next'
+import { Code, Award, Boxes, Images } from 'lucide-vue-next'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -109,6 +139,28 @@ const tabs = [
   { label: 'Projects', icon: Code },
   { label: 'Certificates', icon: Award },
   { label: 'Tech Stack', icon: Boxes },
+  { label: 'Gallery', icon: Images },
+]
+
+const galleryImages = [
+  {
+    src: '/Photo.jpg',
+    alt: 'Gallery Image 1',
+    title: 'Creative Design',
+    description: 'Innovative and engaging digital experiences'
+  },
+  {
+    src: '/Meta.png',
+    alt: 'Gallery Image 2',
+    title: 'Modern Approach',
+    description: 'Building scalable web solutions'
+  },
+  {
+    src: '/Animation1.gif',
+    alt: 'Gallery Image 3',
+    title: 'Dynamic Content',
+    description: 'Bringing ideas to life with animation'
+  }
 ]
 
 const techStacks = ref([
