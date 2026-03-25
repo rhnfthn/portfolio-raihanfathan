@@ -1,11 +1,11 @@
 <template>
   <div>
     <Head>
-      <title>{{ project?.Title ? `${project.Title} — Eki Zulfar Rachman` : 'Loading...' }}</title>
-      <meta v-if="project" name="description" :content="project.Description ? project.Description.slice(0, 155) : `Project ${project.Title} oleh Eki Zulfar Rachman`" />
+      <title>{{ project?.Title ? `${project.Title} — Raihan Fathan` : 'Loading...' }}</title>
+      <meta v-if="project" name="description" :content="project.Description ? project.Description.slice(0, 155) : `Project ${project.Title} by Raihan Fathan`" />
       <meta name="robots" content="index, follow" />
       <link v-if="project" rel="canonical" :href="`https://rhndev.vercel.app/project/${toSlug(project.Title)}`" />
-      <meta v-if="project" property="og:title" :content="`${project.Title} — Eki Zulfar Rachman`" />
+      <meta v-if="project" property="og:title" :content="`${project.Title} — Raihan Fathan`" />
       <meta v-if="project" property="og:description" :content="project.Description?.slice(0, 155)" />
       <meta v-if="project" property="og:url" :content="`https://rhndev.vercel.app/project/${toSlug(project.Title)}`" />
       <meta property="og:type" content="website" />

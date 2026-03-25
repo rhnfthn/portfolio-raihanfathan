@@ -101,6 +101,7 @@
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles } from 'lucide-vue-next'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import raihanPhoto from '~/assets/gallery/raihan.png'
 
 const { supabase } = useSupabase()
 
@@ -108,11 +109,11 @@ const totalProjects = ref(0)
 const totalCertificates = ref(0)
 
 const about = reactive({
-  name: 'Eki Zulfar Rachman',
+  name: 'Raihan Fathan',
   subtitle: "Hello, I'm",
-  description: 'Saya adalah mahasiswa Teknik Informatika yang berfokus pada pengembangan Front-End. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.',
+  description: 'Saya adalah mahasiswa Teknik Informatika yang berfokus pada pengembangan Web Development. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.',
   quote: 'Leveraging AI as a professional tool, not a replacement.',
-  photo_url: '/Photo.jpg',
+  photo_url: raihanPhoto,
   cv_url: 'https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo',
   experience_start: '2021-11-06',
 })

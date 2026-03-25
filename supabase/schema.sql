@@ -235,7 +235,7 @@ INSERT INTO public.site_content (id, data) VALUES
   "status_badge": "Ready to Innovate"
 }'::jsonb),
 ('about', '{
-  "name": "Eki Zulfar Rachman",
+  "name": "raihan fathan",
   "subtitle": "Hello, I''m",
   "description": "Saya adalah mahasiswa Teknik Informatika yang berfokus pada pengembangan Front-End. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.",
   "quote": "Leveraging AI as a professional tool, not a replacement.",

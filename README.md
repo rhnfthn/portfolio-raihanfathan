@@ -2,7 +2,7 @@
 
 Hello everyone\! 👋
 
-Let me introduce myself, I'm **Eki Zulfar Rachman**. On this occasion, I'd like to share the portfolio website project that I've developed. built with React and Supabase, featuring a public-facing site and an admin dashboard.
+Let me introduce myself, I'm **Eki  Rachman**. On this occasion, I'd like to share the portfolio website project that I've developed. built with React and Supabase, featuring a public-facing site and an admin dashboard.
 
 **Live Demo:** [https://rhndev.vercel.app](https://rhndev.vercel.app)
 
@@ -54,8 +54,8 @@ npm install
 Create a `.env` file in the root directory:
 
 ```env
-VITE_SUPABASE_URL=your-supabase-project-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+NUXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NUXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
 You can start from the provided `.env.example` and rename it to `.env`.
@@ -104,8 +104,8 @@ supabase start
 2) Create your local env file:
 
 - Copy `.env.local.example` to `.env`
-- Set `VITE_SUPABASE_URL` to `http://localhost:54321`
-- Copy the **anon key** printed by `supabase start` into `VITE_SUPABASE_ANON_KEY`
+- Set `NUXT_PUBLIC_SUPABASE_URL` to `http://localhost:54321`
+- Copy the **anon key** printed by `supabase start` into `NUXT_PUBLIC_SUPABASE_ANON_KEY`
 
 3) Run the web app:
 
@@ -126,8 +126,8 @@ npm run dev
 ```javascript
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = useRuntimeConfig().public.supabaseUrl
+const supabaseKey = useRuntimeConfig().public.supabaseAnonKey
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Supabase credentials missing. Check your .env file.')

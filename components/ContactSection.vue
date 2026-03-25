@@ -84,7 +84,7 @@ const handleSubmit = async () => {
   })
 
   try {
-    const formSubmitUrl = 'https://formsubmit.co/ekizulfarrachman@gmail.com'
+    const formSubmitUrl = 'https://formsubmit.co/raihanfathan11@gmail.com'
     const submitData = new FormData()
     submitData.append('name', formData.name)
     submitData.append('email', formData.email)
